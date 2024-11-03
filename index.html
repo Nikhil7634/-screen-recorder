@@ -591,8 +591,6 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 
     <script>
-  
-
       const startButtons = document.querySelectorAll(".startBtn");
       const stopBtn = document.querySelector(".stopBtn");
       const resolutionOptions = document.getElementById("resolutionOptions");
@@ -602,17 +600,37 @@
       let recorder;
       let chunks = [];
 
-      startButtons.forEach((button) => {
-        button.addEventListener("click", async () => {
-          resolutionOptions.classList.remove("hidden");
-          // Start recording with the default resolution
-          startRecording(getSelectedResolution());
-        });
-      });
+      // Function to check if screen recording is supported
+      function isScreenRecordingSupported() {
+        return navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
+      }
 
-      stopBtn.addEventListener("click", () => {
-        stopRecording();
-      });
+      // Notify user if screen recording is not supported on their device
+      function notifyUnsupportedDevice() {
+        alert("Screen recording is not supported on mobile devices.");
+        startButtons.forEach((btn) => btn.disabled = true);
+        stopBtn.disabled = true;
+      }
+
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        // Disable buttons and notify if on a mobile device
+        notifyUnsupportedDevice();
+      } else if (!isScreenRecordingSupported()) {
+        // Disable buttons and notify if getDisplayMedia is not available
+        notifyUnsupportedDevice();
+      } else {
+        // Attach event listeners for supported devices
+        startButtons.forEach((button) => {
+          button.addEventListener("click", async () => {
+            resolutionOptions.classList.remove("hidden");
+            startRecording(getSelectedResolution());
+          });
+        });
+
+        stopBtn.addEventListener("click", () => {
+          stopRecording();
+        });
+      }
 
       function getSelectedResolution() {
         return document.querySelector('input[name="resolution"]:checked').value;
@@ -650,6 +668,7 @@
           startButtons.forEach((btn) => (btn.disabled = true));
         } catch (error) {
           console.error("Error accessing screen:", error);
+          alert("Unable to start screen recording: " + error.message);
         }
       }
 
@@ -658,14 +677,7 @@
           recorder.stop();
         }
       }
+</script>
 
-
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-  document.querySelectorAll(".startBtn, .stopBtn").forEach(btn => {
-    btn.disabled = true;
-  });
-  alert("Screen recording is not supported on mobile devices.");
-}
-    </script>
   </body>
 </html>
