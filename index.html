@@ -591,6 +591,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 
     <script>
+  
+
       const startButtons = document.querySelectorAll(".startBtn");
       const stopBtn = document.querySelector(".stopBtn");
       const resolutionOptions = document.getElementById("resolutionOptions");
@@ -656,6 +658,14 @@
           recorder.stop();
         }
       }
+
+
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+  document.querySelectorAll(".startBtn, .stopBtn").forEach(btn => {
+    btn.disabled = true;
+  });
+  alert("Screen recording is not supported on mobile devices.");
+}
     </script>
   </body>
 </html>
